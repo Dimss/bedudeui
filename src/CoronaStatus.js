@@ -1,19 +1,12 @@
 import React from "react";
 
 import {
-    G2,
     Chart,
     Geom,
     Axis,
     Tooltip,
-    Coord,
-    Label,
     Legend,
-    View,
     Guide,
-    Shape,
-    Facet,
-    Util,
 } from 'bizcharts';
 
 const { Line } = Guide;
@@ -29,7 +22,7 @@ export default class CoronaStatus extends React.Component {
 
     constructor(props) {
         super(props)
-        if (process.env.REACT_APP_PROFILE === 'dev') this.API = "https://localhost:5001";
+        this.API = "http://bedudeapi.cloudapp.net";
         this.state = { coronaStatusData: null }
     }
 
@@ -38,11 +31,17 @@ export default class CoronaStatus extends React.Component {
     }
 
     loadCoronaStatusData = () => {
-        fetch(`${this.API}/api/coronastatus`).then((response) => {
+        fetch(`${this.API}/api/corona/status`).then((response) => {
             return response.json()
         }).then((data) => {
+            let chartData = []
+            data.forEach((record) => {
+                if (record.Date == "0001-01-01T00:00:00Z") return;
+                record.Date = record.Date.substring(0, record.Date.indexOf("T"))
+                chartData.push(record);
+            })
             this.setState({
-                coronaStatusData: data
+                coronaStatusData: chartData
             })
         }).catch((error) => {
             console.error('Error:', error);
@@ -50,13 +49,12 @@ export default class CoronaStatus extends React.Component {
     }
 
     render() {
-        console.log(this.state.coronaStatusData);
         return (
 
             < Chart height={600} data={this.state.coronaStatusData} scale={cols} forceFit >
                 <Legend />
-                <Axis name="date" />
-                <Axis name="quantity" />
+                <Axis name="Date" />
+                <Axis name="Cases" />
                 <Tooltip
                     crosshairs={{
                         type: 'y',
@@ -64,39 +62,38 @@ export default class CoronaStatus extends React.Component {
                 />
                 <Geom
                     type="line"
-                    position="date*quantity"
+                    position="Date*Cases"
                     size={2}
-                    color={['quantityType', (quantityType) => {
+                    color={['Status', (quantityType) => {
                         //some code
                         if (quantityType == 'deaths') {
                             return '#ff7875';
                         }
-                        if (quantityType == 'recovered') {
-                            return '#95de64';
-                        }
-                        if (quantityType == 'active') {
-                            return '#ffc53d';
-                        }
+                        // if (quantityType == 'recovered') {
+                        //     return '#95de64';
+                        // }
+                        // if (quantityType == 'confirmed') {
+                        //     return '#ffc53d';
+                        // }
 
                     }]}
                 />
                 <Geom
                     type="point"
-                    position="date*quantity"
+                    position="Date*Cases"
                     size={4}
                     shape={'circle'}
-                    color={['quantityType', (quantityType) => {
-                        //some code
+                    color={['Status', (quantityType) => {
                         if (quantityType == 'deaths') {
                             return '#ff7875';
                         }
-                        if (quantityType == 'recovered') {
-                            return '#95de64';
-                        }
+                        // if (quantityType == 'recovered') {
+                        //     return '#95de64';
+                        // }
 
-                        if (quantityType == 'active') {
-                            return '#ffc53d';
-                        }
+                        // if (quantityType == 'confirmed') {
+                        //     return '#ffc53d';
+                        // }
 
                     }]}
                     style={{
