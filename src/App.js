@@ -13,7 +13,7 @@ function App() {
 
     <Layout className="layout">
       <Header className="my-header">
-        <div className="logo"><div className="logo-text">Corona Status</div></div>
+        <div className="logo"><div className="logo-text">BeDude Status</div></div>
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
           <Menu.Item key="1">Status</Menu.Item>
         </Menu>

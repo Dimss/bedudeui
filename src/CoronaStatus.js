@@ -22,7 +22,7 @@ export default class CoronaStatus extends React.Component {
 
     constructor(props) {
         super(props)
-        this.API = "http://bedudeapi.cloudapp.net";
+        this.API = "";
         this.state = { coronaStatusData: null }
     }
 
@@ -31,13 +31,13 @@ export default class CoronaStatus extends React.Component {
     }
 
     loadCoronaStatusData = () => {
-        fetch(`${this.API}/api/corona/status`).then((response) => {
+        fetch(`${this.API}/api/corona`).then((response) => {
             return response.json()
         }).then((data) => {
             let chartData = []
             data.forEach((record) => {
-                if (record.Date == "0001-01-01T00:00:00Z") return;
-                record.Date = record.Date.substring(0, record.Date.indexOf("T"))
+                if (record.date == "0001-01-01T00:00:00Z") return;
+                record.date = record.date.substring(0, record.date.indexOf("T"))
                 chartData.push(record);
             })
             this.setState({
@@ -53,8 +53,8 @@ export default class CoronaStatus extends React.Component {
 
             < Chart height={600} data={this.state.coronaStatusData} scale={cols} forceFit >
                 <Legend />
-                <Axis name="Date" />
-                <Axis name="Cases" />
+                <Axis name="date" />
+                <Axis name="cases" />
                 <Tooltip
                     crosshairs={{
                         type: 'y',
@@ -62,9 +62,9 @@ export default class CoronaStatus extends React.Component {
                 />
                 <Geom
                     type="line"
-                    position="Date*Cases"
+                    position="date*cases"
                     size={2}
-                    color={['Status', (quantityType) => {
+                    color={['status', (quantityType) => {
                         //some code
                         if (quantityType == 'deaths') {
                             return '#ff7875';
@@ -80,10 +80,10 @@ export default class CoronaStatus extends React.Component {
                 />
                 <Geom
                     type="point"
-                    position="Date*Cases"
+                    position="date*cases"
                     size={4}
                     shape={'circle'}
-                    color={['Status', (quantityType) => {
+                    color={['status', (quantityType) => {
                         if (quantityType == 'deaths') {
                             return '#ff7875';
                         }
